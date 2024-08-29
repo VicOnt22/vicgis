@@ -4,3 +4,15 @@ html,body,#viewDiv {
   height: 100%;
   width: 100%;
 }
+
+#customPopup {
+  position: absolute;
+  z-index: 1;
+  top: 80px;
+  right: 10px;
+  height: 200px;
+  width: 300px;
+  background-color: aqua;
+  border-radius: 5px;
+  opacity: 0.6;
+}
