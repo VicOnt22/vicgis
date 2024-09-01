@@ -3,10 +3,14 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
   "esri/widgets/LayerList",
   "esri/geometry/Point",
   "esri/Graphic",
-  "esri/layers/GraphicsLayer"], 
-   function(esriConfig, Map, MapView, WebMap, Legend, LayerList, Point, Graphic, GraphicsLayer) {
+  "esri/layers/GraphicsLayer",
+  "esri/layers/FeatureLayer",
+  "esri/views/layers/LayerView",
+  "esri/rest/support/Query"], 
+  function(esriConfig, Map, MapView, WebMap, Legend, LayerList, Point, Graphic, 
+    GraphicsLayer, FeatureLayer, LayerView, Query) {
 
-    // esriConfig.apiKeyAA = "..PTxy8BH1VEsoebNVZXo8HurA00kGrEUM88Me3K5X12dKEX4TMcmo0W5Wax2c5rnRwj-D4jZce2c7SyOloOm4jt6233p_p2PIiu95_P_u0z4qgefMAUj5pxwcOumkpAUl1GWo797V1TSq6liHwqLGbBz7NJhkfayFFu_lWOAgnerk9kzxdhqv8g9xUpRCAl8Gu1ZHRzkO6ZNKnoZORzJDIwN-Pg3_Cwh7ZIYEpsKzAoQSyz0ll4WcJBscktusFy0dPPAT1_IjObyirT";
+    // esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurA00kGrEUM88Me3K5X12dKEX4TMcmo0W5Wax2c5rnRwj-D4jZce2c7SyOloOm4jt6233p_p2PIiu95_P_u0z4qgefMAUj5pxwcOumkpAUl1GWo797V1TSq6liHwqLGbBz7NJhkfayFFu_lWOAgnerk9kzxdhqv8g9xUpRCAl8Gu1ZHRzkO6ZNKnoZORzJDIwN-Pg3_Cwh7ZIYEpsKzAoQSyz0ll4WcJBscktusFy0dPPAT1_IjObyirT";
     // const map = new Map({
     //   basemap: "arcgis/topographic" // basemap styles service
     // });
@@ -37,53 +41,87 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     });
 
   
-  view.on("click", function(event){
-    view.popup = null; //supress existing popup info
-    let latitude =event.mapPoint.latitude;
-    let longitude =event.mapPoint.longitude;
-    // console.log(event);
-    // console.log(latitude, longitude);
-    document.getElementById("yCoordinate").textContent = latitude;
-    document.getElementById("xCoordinate").textContent = longitude
-  });
-      //create and add Legend vidget to the view
-      const legendWidget = new Legend({
-        view: view
-      })
-      view.ui.add(legendWidget, "bottom-left");
+  // view.on("click", function(event){
+  //   view.popup = null; //supress existing popup info
+  //   let latitude =event.mapPoint.latitude;
+  //   let longitude =event.mapPoint.longitude;
+  //   // console.log(event);
+  //   // console.log(latitude, longitude);
+  //   document.getElementById("yCoordinate").textContent = latitude;
+  //   document.getElementById("xCoordinate").textContent = longitude
+  // });
+  //     //create and add Legend vidget to the view
+  //     const legendWidget = new Legend({
+  //       view: view
+  //     })
+  //     view.ui.add(legendWidget, "bottom-left");
 
-      // add LayerList widget
-      let layerList = new LayerList({
-        view: view
-      })
-      view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
+  //     // add LayerList widget
+  //     let layerList = new LayerList({
+  //       view: view
+  //     })
+  //     view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
    
-      // now we extract layer name from webmap layers property to use in html dropdown
-      view.when().then(() => {
-        webmap.layers.map((Layer)=>{
-          console.log(Layer.title);
-          let option = document.createElement("option");
-          option.textContent = Layer.title;
-          let select = document.getElementById("layerName")
-          select.appendChild(option);
+  //     // now we extract layer name from webmap layers property to use in html dropdown
+  //     view.when().then(() => {
+  //       webmap.layers.map((Layer)=>{
+  //         console.log(Layer.title);
+  //         let option = document.createElement("option");
+  //         option.textContent = Layer.title;
+  //         let select = document.getElementById("layerName")
+  //         select.appendChild(option);
+  //       })
+  //       let lyrList = document.getElementById("lyrList");
+  //       view.ui.add(lyrList, "bottom-right");
+  //     })
+
+  //     // graphics layer Point feature
+  //     let newPointFeature = new Point({
+  //       longitude: -78.2,
+  //       latitude: 44.83,
+  //     })
+  //     const pointGraphic = new Graphic({
+  //       geometry: newPointFeature,       // continue creating simple point graphic
+  //     })
+  //     let newGraphicsLayer = new GraphicsLayer({}); // create GraphicsLayer to which we add our point graphic
+  //     newGraphicsLayer.graphics.add(pointGraphic);
+  //     view.map.add(newGraphicsLayer); //add layer to the map- we see black dot!
+
+     // add LayerList widget
+      // let layerList = new LayerList({
+      //   view: view
+      // })
+      // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
+
+      const layer = new FeatureLayer({
+        // url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
+        url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
+      });
+
+view.when().then(() => {
+  layer.queryFeatureCount().then(function (numFeatures) {
+    //total count to the console
+    document.getElementById("layerResult").textContent = numFeatures;
+    console.log(numFeatures);
+  })
+
+  view.whenLayerView(layer).then(function(LayerView) {
+    //do simething with LayerView, by ex, zoom
+    LayerView.watch("updating", function (value){
+      if (value){
+        LayerView.queryFeatureCount().then(function(numFeatures){
+          //total count from layerView
+          document.getElementById("layerViewResult").textContent = numFeatures;
+          console.log(numFeatures);
         })
-        let lyrList = document.getElementById("lyrList");
-        view.ui.add(lyrList, "bottom-right");
-      })
+      }
+    })
 
-      // graphics layer Point feature
-      let newPointFeature = new Point({
-        longitude: -78.2,
-        latitude: 44.83,
-      })
-      const pointGraphic = new Graphic({
-        geometry: newPointFeature,       // continue creating simple point graphic
-      })
-      let newGraphicsLayer = new GraphicsLayer({}); // create GraphicsLayer to which we add our point graphic
-      newGraphicsLayer.graphics.add(pointGraphic);
-      view.map.add(newGraphicsLayer); //add layer to the map- we see black dot!
+  })
 
 
+
+})
 
 
 });
