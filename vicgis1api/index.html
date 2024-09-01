@@ -12,21 +12,32 @@
       <script src="script.js"></script>
     </head>
     <body>
-      <h3>Vic ArcGIS WebMap Dru sites from Health Canada</h3>
+      <header><h3>Vic ArcGIS WebMap </h3></header>
+      <nav>
+        <a href="#">Home</a>
+        <a href="#">Map</a>
+        <a href="#">Layers</a>
+        <a href="#">About</a>
+      </nav>
       <div id="viewDiv"></div>
+      <div id="tableDiv"></div>
+
+      <!-- <div id="customPopup">
 
       <!-- <div id="customPopup">
         <h2>Coordinates</h2>
         Latitude: <span id="yCoordinate"></span>;<br>
         Longitude: <span id="xCoordinate"></span>;
       </div> -->
+
     <!-- create dropdown with lyrList custom widget names, doing nothing, just dropdown -->
-    <!--<div id="lyrList">
+
+    <div class="esri-widget" id="lyrList">
       <label>Layer List</label>
       <select id="layerName">
         <option>Select the Layer</option>
       </select> 
-    </div>-->
+    </div>
 
         <div class="esri-widget" id="customPopup">
         <h2>Feature count</h2>
@@ -34,11 +45,11 @@
         LayerView: <span id="layerViewResult"></span>;
       </div>
 
-      <div class="esri-widget" id="queryFeatures">
+      <!-- <div class="esri-widget" id="queryFeatures">
         <input type="text" placeholder="Enter query parameter" id="searchInput" /><br>
         <button id="queryBtn">QueryRecords</button>
         <p id="queryResultInfo"></p>
-      </div>
+      </div> -->
 
 
     </body>

@@ -6,9 +6,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
   "esri/layers/GraphicsLayer",
   "esri/layers/FeatureLayer",
   "esri/views/layers/LayerView",
-  "esri/rest/support/Query"], 
+  "esri/rest/support/Query",
+  "esri/widgets/FeatureTable"], 
   function(esriConfig, Map, MapView, WebMap, Legend, LayerList, Point, Graphic, 
-    GraphicsLayer, FeatureLayer, LayerView, Query) {
+    GraphicsLayer, FeatureLayer, LayerView, Query, FeatureTable) {
 
     // esriConfig.apiKeyAA = "..PTxy8BH1VEsoebNVZXo8HurA00kGrEUM88Me3K5X12dKEX4TMcmo0W5Wax2c5rnRwj-D4jZce2c7SyOloOm4jt6233p_p2PIiu95_P_u0z4qgefMAUj5pxwcOumkpAUl1GWo797V1TSq6liHwqLGbBz7NJhkfayFFu_lWOAgnerk9kzxdhqv8g9xUpRCAl8Gu1ZHRzkO6ZNKnoZORzJDIwN-Pg3_Cwh7ZIYEpsKzAoQSyz0ll4WcJBscktusFy0dPPAT1_IjObyirT";
     // const map = new Map({
@@ -29,7 +30,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     //Instead of webmap we use WebMap class
     const webmap = new WebMap({
       portalItem: { // autocasts as new PortalItem()
-        id: "4d60688e31844dcdbc81bd6487f293ec"
+        id: "cf35269c59cd45cc9bfae3480c0a64d7"
       }
     });
 
@@ -94,8 +95,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
       // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
 
       const layer = new FeatureLayer({
-        url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
-        // url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
+        // url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
+        url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
       });
 
 view.when().then(() => {
@@ -119,16 +120,16 @@ view.when().then(() => {
     });
   });
 });
-// qyert Feature result using parameter from our Input 
-view.ui.add(document.getElementById("queryFeatures"), "top-left");
-document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
+// // qyery Feature result using parameter from our Input 
+// view.ui.add(document.getElementById("queryFeatures"), "top-left");
+// document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
 
-function queryFeatureLayer(){
-  let featureName = document.getElementById("searchInput").value;
+// function queryFeatureLayer(){
+  // let featureName = document.getElementById("searchInput").value;
   // alert(featureName);
   // console.log(featureName);
   // //create query for the layer
-  let query = layer.createQuery();
+  // let query = layer.createQuery();
   // //define the parameters for he query
   // query.where = "1=1";
 
@@ -144,21 +145,49 @@ function queryFeatureLayer(){
   //     document.getElementById("queryResultInfo").textContent = `${featureName} is in ${cityName} city`
   //   })
 
-  // works when enter sity name 'Guelf' - responds with site center name
-  query.where = `city = '${featureName}'`;
-  query.outFields =["*"];
-  query.returnGeometry = true;
-  //execute the query
-  layer.queryFeatures(query).then((result) => {
-    console.log(result);
-    result.features.map((feature) => {
-      let siteName = feature.attributes["site"];
-      document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`
-    })
+  // // works when enter sity name 'Guelf' - responds with site center name
+  // query.where = `city = '${featureName}'`;
+  // query.outFields =["*"];
+  // query.returnGeometry = true;
+  // //execute the query
+  // layer.queryFeatures(query).then((result) => {
+  //   console.log(result);
+  //   result.features.map((feature) => {
+  //     let siteName = feature.attributes["site"];
+  //     document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`
+  //   });
+  // });
+    
+// now we add working dropdown with actions after select from the list of layer names
 
-  })
+//     // add LayerList widget
+      // let layerList = new LayerList({
+      //   view: view
+      // })
+      // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
+   
+  //     // now we extract layer name from webmap layers property to use in html dropdown
+      view.when().then(() => {
+        webmap.layers.map((Layer)=>{
+          console.log(Layer.title);
+          let option = document.createElement("option");
+          option.textContent = Layer.title;
+          let select = document.getElementById("layerName")
+          select.appendChild(option);
+        })
+        let lyrList = document.getElementById("lyrList");
+        view.ui.add(lyrList, "top-left");
+      })
 
-}
+      const featureTable = new FeatureTable({
+       view: view,
+       layer: layer,   //layer from line 97 "hazards public Salesforce table"
+       container: "tableDiv"
+       });
+
+
+
+
 
 
 
