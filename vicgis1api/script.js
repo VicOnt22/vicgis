@@ -10,7 +10,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
   function(esriConfig, Map, MapView, WebMap, Legend, LayerList, Point, Graphic, 
     GraphicsLayer, FeatureLayer, LayerView, Query) {
 
-    // esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurA00kGrEUM88Me3K5X12dKEX4TMcmo0W5Wax2c5rnRwj-D4jZce2c7SyOloOm4jt6233p_p2PIiu95_P_u0z4qgefMAUj5pxwcOumkpAUl1GWo797V1TSq6liHwqLGbBz7NJhkfayFFu_lWOAgnerk9kzxdhqv8g9xUpRCAl8Gu1ZHRzkO6ZNKnoZORzJDIwN-Pg3_Cwh7ZIYEpsKzAoQSyz0ll4WcJBscktusFy0dPPAT1_IjObyirT";
+    // esriConfig.apiKeyAA = "..PTxy8BH1VEsoebNVZXo8HurA00kGrEUM88Me3K5X12dKEX4TMcmo0W5Wax2c5rnRwj-D4jZce2c7SyOloOm4jt6233p_p2PIiu95_P_u0z4qgefMAUj5pxwcOumkpAUl1GWo797V1TSq6liHwqLGbBz7NJhkfayFFu_lWOAgnerk9kzxdhqv8g9xUpRCAl8Gu1ZHRzkO6ZNKnoZORzJDIwN-Pg3_Cwh7ZIYEpsKzAoQSyz0ll4WcJBscktusFy0dPPAT1_IjObyirT";
     // const map = new Map({
     //   basemap: "arcgis/topographic" // basemap styles service
     // });
@@ -29,7 +29,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     //Instead of webmap we use WebMap class
     const webmap = new WebMap({
       portalItem: { // autocasts as new PortalItem()
-        id: "cf35269c59cd45cc9bfae3480c0a64d7"
+        id: "4d60688e31844dcdbc81bd6487f293ec"
       }
     });
 
@@ -94,34 +94,74 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
       // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
 
       const layer = new FeatureLayer({
-        // url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
-        url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
+        url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
+        // url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
       });
 
 view.when().then(() => {
+
   layer.queryFeatureCount().then(function (numFeatures) {
     //total count to the console
     document.getElementById("layerResult").textContent = numFeatures;
     console.log(numFeatures);
   })
-
+    // below does not show value?
   view.whenLayerView(layer).then(function(LayerView) {
     //do simething with LayerView, by ex, zoom
     LayerView.watch("updating", function (value){
-      if (value){
-        LayerView.queryFeatureCount().then(function(numFeatures){
+      if (!value){
+        LayerView.queryFeatureCount().then(function(numFeaturess){
           //total count from layerView
-          document.getElementById("layerViewResult").textContent = numFeatures;
-          console.log(numFeatures);
-        })
+          document.getElementById("layerViewResult").textContent = numFeaturess;
+          console.log(numFeaturess);
+        });
       }
+    });
+  });
+});
+// qyert Feature result using parameter from our Input 
+view.ui.add(document.getElementById("queryFeatures"), "top-left");
+document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
+
+function queryFeatureLayer(){
+  let featureName = document.getElementById("searchInput").value;
+  // alert(featureName);
+  // console.log(featureName);
+  // //create query for the layer
+  let query = layer.createQuery();
+  // //define the parameters for he query
+  // query.where = "1=1";
+
+  // // works when enter site name 'Four Cast' - responds with city name
+  // query.where = `site = '${featureName}'`;
+  // query.outFields =["*"];
+  // query.returnGeometry = true;
+  // //execute the query
+  // layer.queryFeatures(query).then((result) => {
+  //   console.log(result);
+  //   result.features.map((feature) => {
+  //     let cityName = feature.attributes["city"];
+  //     document.getElementById("queryResultInfo").textContent = `${featureName} is in ${cityName} city`
+  //   })
+
+  // works when enter sity name 'Guelf' - responds with site center name
+  query.where = `city = '${featureName}'`;
+  query.outFields =["*"];
+  query.returnGeometry = true;
+  //execute the query
+  layer.queryFeatures(query).then((result) => {
+    console.log(result);
+    result.features.map((feature) => {
+      let siteName = feature.attributes["site"];
+      document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`
     })
 
   })
 
+}
 
 
-})
+
 
 
 });
