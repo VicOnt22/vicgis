@@ -7,9 +7,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
   "esri/layers/FeatureLayer",
   "esri/views/layers/LayerView",
   "esri/rest/support/Query",
-  "esri/widgets/FeatureTable"], 
+  "esri/widgets/FeatureTable",
+  "esri/widgets/Sketch"], 
   function(esriConfig, Map, MapView, WebMap, Legend, LayerList, Point, Graphic, 
-    GraphicsLayer, FeatureLayer, LayerView, Query, FeatureTable) {
+    GraphicsLayer, FeatureLayer, LayerView, Query, FeatureTable, Sketch) {
 
     // esriConfig.apiKeyAA = "..PTxy8BH1VEsoebNVZXo8HurA00kGrEUM88Me3K5X12dKEX4TMcmo0W5Wax2c5rnRwj-D4jZce2c7SyOloOm4jt6233p_p2PIiu95_P_u0z4qgefMAUj5pxwcOumkpAUl1GWo797V1TSq6liHwqLGbBz7NJhkfayFFu_lWOAgnerk9kzxdhqv8g9xUpRCAl8Gu1ZHRzkO6ZNKnoZORzJDIwN-Pg3_Cwh7ZIYEpsKzAoQSyz0ll4WcJBscktusFy0dPPAT1_IjObyirT";
     // const map = new Map({
@@ -167,38 +168,51 @@ view.when().then(() => {
       // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
    
   //     // now we extract layer name from webmap layers property to use in html dropdown
-  let lyrList = document.getElementById("lyrList");
-  view.ui.add(lyrList, "top-left");
+  // let lyrList = document.getElementById("lyrList");
+  // view.ui.add(lyrList, "top-left");
 
-      view.when().then(() => {
-        webmap.layers.map((Layer)=>{
-          // console.log(Layer.title);
-          let option = document.createElement("option");
-          option.textContent = Layer.title;
-          let select = document.getElementById("layerName")
-          select.appendChild(option);
-        });
-      });
+      // view.when().then(() => {
+      //   webmap.layers.map((Layer)=>{
+      //     // console.log(Layer.title);
+      //     let option = document.createElement("option");
+      //     option.textContent = Layer.title;
+      //     let select = document.getElementById("layerName")
+      //     select.appendChild(option);
+      //   });
+      // });
 
-      document.getElementById("layerName").addEventListener("change", getLayerName);
-      function getLayerName (event){
-        console.log(event.target.value);
-        let lyrName = event.target.value;
-        document.getElementById("tableDiv").innerHTML = null;  //clear previous selection
-        // find a layer by its title
-        const foundLayer = webmap.allLayers.find(function (layer){
-          return layer.title === lyrName;
-        });
+      // document.getElementById("layerName").addEventListener("change", getLayerName);
 
-      let featureTable = new FeatureTable({
-       view: view,
-       layer: foundLayer,   //layer from line 97 "hazards public Salesforce table"
-       container: "tableDiv"
-       });
+      // function getLayerName (event){
+      //   console.log(event.target.value);
+      //   let lyrName = event.target.value;
+      //   document.getElementById("tableDiv").innerHTML = null;  //clear previous selection
+      //   // find a layer by its title
+      //   const foundLayer = webmap.allLayers.find(function (layer){
+      //     return layer.title === lyrName;
+      //   });
 
-
-      }
+      //   let featureTable = new FeatureTable({
+      //     view: view,
+      //     layer: foundLayer,   //layer from line 97 "hazards public Salesforce table"
+      //     container: "tableDiv"
+      //   });
+      // }
   
+  // //sketch widget needs graphics layer to draw on it
+
+  let graphicsLayer = new GraphicsLayer({
+    view:view,
+  });
+
+  let sketch = new Sketch ({
+    layer: graphicsLayer,
+    view: view,
+  })
+
+  webmap.add(graphicsLayer);
+
+  view.ui.add(sketch, "bottom-left");
 
 
 
