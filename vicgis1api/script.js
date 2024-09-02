@@ -167,26 +167,38 @@ view.when().then(() => {
       // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
    
   //     // now we extract layer name from webmap layers property to use in html dropdown
+  let lyrList = document.getElementById("lyrList");
+  view.ui.add(lyrList, "top-left");
+
       view.when().then(() => {
         webmap.layers.map((Layer)=>{
-          console.log(Layer.title);
+          // console.log(Layer.title);
           let option = document.createElement("option");
           option.textContent = Layer.title;
           let select = document.getElementById("layerName")
           select.appendChild(option);
-        })
-        let lyrList = document.getElementById("lyrList");
-        view.ui.add(lyrList, "top-left");
-      })
+        });
+      });
 
-      const featureTable = new FeatureTable({
+      document.getElementById("layerName").addEventListener("change", getLayerName);
+      function getLayerName (event){
+        console.log(event.target.value);
+        let lyrName = event.target.value;
+        document.getElementById("tableDiv").innerHTML = null;  //clear previous selection
+        // find a layer by its title
+        const foundLayer = webmap.allLayers.find(function (layer){
+          return layer.title === lyrName;
+        });
+
+      let featureTable = new FeatureTable({
        view: view,
-       layer: layer,   //layer from line 97 "hazards public Salesforce table"
+       layer: foundLayer,   //layer from line 97 "hazards public Salesforce table"
        container: "tableDiv"
        });
 
 
-
+      }
+  
 
 
 
