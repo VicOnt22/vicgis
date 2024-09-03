@@ -23,6 +23,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     // webmap id: cf35269c59cd45cc9bfae3480c0a64d7 webmap of transcanadian trails from Content/LivingAtlas so is public
     // webmap id: 3b484bf1b7cf4e33beaca992bdfc3c2f  topographic map public also from LivingAtlas
     // basemap 'hybrid' can be used  without apiKey
+    // Task 2
+    //   url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0"
+    // id: 5cf54b36bedd460c8c8ecf5a9cfff737  myown feature service for wildfire
+    // id: e2fecab55dc047f2a57714cfa9221477 WFS hosted from layer wildfire view
+    // id: 4cc4ab73035a4805a03bdc3cdc056932   usa weather with time enabled widget
 
     // const map = new Map({
     // basemap: "hybrid" // basemap styles service
@@ -31,18 +36,19 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     //Instead of webmap we use WebMap class
     const webmap = new WebMap({
       portalItem: { // autocasts as new PortalItem()
-        id: "4d60688e31844dcdbc81bd6487f293ec"
+        // id: "1793be3bf1b54796ac9c48cb7f754020"
+        id: "29acc12bf6054b21a703f0ef07757dd8"
       }
     });
 
     const view = new MapView({
       map: webmap,
-      center: [-79.43, 43.72], // Longitude, latitude
-      zoom: 5, // Zoom level
+      center: [-79.46, 43.73], // Longitude, latitude
+      zoom: 12, // Zoom level
       container: "viewDiv" // Div element
     });
 
-  
+  // Simple click on Map to show coordinates
     // view.on("click", function(event){
     //   view.popup = null; //supress existing popup info
     //   let latitude =event.mapPoint.latitude;
@@ -52,6 +58,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     //   document.getElementById("yCoordinate").textContent = latitude;
     //   document.getElementById("xCoordinate").textContent = longitude
     // });
+
+
     //     //create and add Legend vidget to the view
     //     const legendWidget = new Legend({
     //       view: view
@@ -96,85 +104,90 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
       // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
 
       const layer = new FeatureLayer({
-        url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
+        // url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
         // url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
+        // url: 'https://vicgis.maps.arcgis.com/apps/mapviewer/index.html?webmap=730c84ccdbc9496ab7aebdfe5de45c82'
+        url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/From_files_hosted_feature_layer_view/FeatureServer'
       });
 
   view.when().then(() => {
 
-    layer.queryFeatureCount().then(function (numFeatures) {
-      //total count to the console
-      document.getElementById("layerResult").textContent = numFeatures;
-      console.log(numFeatures);
-    })
+    // layer.queryFeatureCount().then(function (numFeatures) {
+    //   //total count to the console
+    //   document.getElementById("layerResult").textContent = numFeatures;
+    //   console.log(numFeatures);
+    // })
       // below does not show value?
-    view.whenLayerView(layer).then(function(LayerView) {
-      //do simething with LayerView, by ex, zoom
-      LayerView.watch("updating", function (value){
-        if (!value){
-          LayerView.queryFeatureCount().then(function(numFeaturess){
-            //total count from layerView
-            document.getElementById("layerViewResult").textContent = numFeaturess;
-            console.log(numFeaturess);
-          });
-        }
-      });
-    });
+    // view.whenLayerView(layer).then(function(LayerView) {
+    //   //do simething with LayerView, by ex, zoom
+    //   LayerView.watch("updating", function (value){
+    //     if (!value){
+    //       LayerView.queryFeatureCount().then(function(numFeaturess){
+    //         //total count from layerView
+    //         document.getElementById("layerViewResult").textContent = numFeaturess;
+    //         console.log(numFeaturess);
+    //       });
+    //     }
+    //   });
+    // });
   });
   // query Feature result using parameter from our Input 
-  view.ui.add(document.getElementById("queryFeatures"), "top-left");
-  document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
+  view.ui.add(document.getElementById("customPopup"), "top-right");
+  // document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
+  
+  // view.on("click", queryFeatureLayer);
 
-  function queryFeatureLayer(){
-    let featureName = document.getElementById("searchInput").value;
-    // alert(featureName);
-    // console.log(featureName);
-    // //create query for the layer
-      let query = layer.createQuery();
-    // //define the parameters for he query
-    // query.where = "1=1";
+  // function queryFeatureLayer(){
+  //   // let featureName = document.getElementById("searchInput").value;
+  //   // alert(featureName);
+  //   // console.log(featureName);
+  //   // //create query for the layer
+  //     let query = layer.createQuery();
+  //   // //define the parameters for he query
+  //   // query.where = "1=1";
 
-    // // works when enter site name 'Four Cast' - responds with city name
-    // query.where = `site = '${featureName}'`;
-    // query.outFields =["*"];
-    // query.returnGeometry = true;
-    // //execute the query
-    // layer.queryFeatures(query).then((result) => {
-    //   console.log(result);
-    //   result.features.map((feature) => {
-    //     let cityName = feature.attributes["city"];
-    //     document.getElementById("queryResultInfo").textContent = `${featureName} is in ${cityName} city`
-    //   })
+  //   // // works when enter site name 'Four Cast' - responds with city name
+  //   // query.where = `site = '${featureName}'`;
+  //   // query.outFields =["*"];
+  //   // query.returnGeometry = true;
+  //   // //execute the query
+  //   // layer.queryFeatures(query).then((result) => {
+  //   //   console.log(result);
+  //   //   result.features.map((feature) => {
+  //   //     let cityName = feature.attributes["city"];
+  //   //     document.getElementById("queryResultInfo").textContent = `${featureName} is in ${cityName} city`
+  //   //   })
 
-    // works when enter sity name 'Guelf' - responds with site center name
-    query.where = `city = '${featureName}'`;
-    query.outFields =["*"];
-    query.returnGeometry = true;
-    //execute the query
-    layer.queryFeatures(query).then((result) => {
-      console.log(result);
-      result.features.map((feature) => {
-        let siteName = feature.attributes["site"];
-        document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`;
+  //   // works when enter sity name 'Guelf' - responds with site center name
+  //   // query.where = `city = '${featureName}'`;
+  //   query.where = "1=1";
+  //   query.outFields =["*"];
+  //   query.returnGeometry = true;
+  //   //execute the query
+  //   layer.queryFeatures(query).then((result) => {
+  //     console.log(result);
+  //     result.features.map((feature) => {
+  //       let sitePercent = feature.attributes["tcc_v"];
+  //       document.getElementById("queryResultInfo").textContent = `poligon canopy percentage ${sitePercent}`;
 
-        let latPoint = feature.attributes["lat"];
-        let longPoint = feature.attributes["long"];
-        let newPoint = new Point({
-          longitude: `${longPoint}`,
-          latitude: `${latPoint}`,
-        });
-         //create a point graphic
-         const pointGraphic = new Graphic({
-          geometry: newPoint,
-         }) 
-         let newGraphicLayer = new GraphicsLayer({});
-         view.graphics.add(pointGraphic);
-         view.map.add(newGraphicLayer);
+  //       // let latPoint = feature.attributes["lat"];
+  //       // let longPoint = feature.attributes["long"];
+  //       // let newPoint = new Point({
+  //       //   longitude: `${longPoint}`,
+  //       //   latitude: `${latPoint}`,
+  //       // });
+  //       //  //create a point graphic
+  //       //  const pointGraphic = new Graphic({
+  //       //   geometry: newPoint,
+  //       //  }) 
+  //       //  let newGraphicLayer = new GraphicsLayer({});
+  //       //  view.graphics.add(pointGraphic);
+  //       //  view.map.add(newGraphicLayer);
 
 
-      });
-    });
-  }
+  //     });
+  //   });
+  // }
 
 
 
