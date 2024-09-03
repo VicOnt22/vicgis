@@ -22,6 +22,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     // webmap id: 4d60688e31844dcdbc81bd6487f293ec  drug sites use require Vic login as share is not public
     // webmap id: cf35269c59cd45cc9bfae3480c0a64d7 webmap of transcanadian trails from Content/LivingAtlas so is public
     // webmap id: 3b484bf1b7cf4e33beaca992bdfc3c2f  topographic map public also from LivingAtlas
+    // id: 84ae8a91f40c44de94a370f28c30ab6d wildfire
     // basemap 'hybrid' can be used  without apiKey
 
     // const map = new Map({
@@ -31,13 +32,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     //Instead of webmap we use WebMap class
     const webmap = new WebMap({
       portalItem: { // autocasts as new PortalItem()
-        id: "4d60688e31844dcdbc81bd6487f293ec"
+        id: "84ae8a91f40c44de94a370f28c30ab6d"
       }
     });
 
     const view = new MapView({
       map: webmap,
-      center: [-79.43, 43.72], // Longitude, latitude
+      center: [-93.43, 43.72], // Longitude, latitude
       zoom: 5, // Zoom level
       container: "viewDiv" // Div element
     });
