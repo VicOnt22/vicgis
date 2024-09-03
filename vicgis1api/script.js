@@ -23,6 +23,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     // webmap id: cf35269c59cd45cc9bfae3480c0a64d7 webmap of transcanadian trails from Content/LivingAtlas so is public
     // webmap id: 3b484bf1b7cf4e33beaca992bdfc3c2f  topographic map public also from LivingAtlas
     // id: 84ae8a91f40c44de94a370f28c30ab6d wildfire
+    //   // url: 'https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Active_Wildfire_Perimeters_in_Canada_View/FeatureServer'
+    //   url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0"
     // basemap 'hybrid' can be used  without apiKey
 
     // const map = new Map({
@@ -97,88 +99,87 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
       // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
 
       const layer = new FeatureLayer({
-        url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
+        // url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
         // url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
+        url: 'https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Active_Wildfire_Perimeters_in_Canada_View/FeatureServer'
+
       });
+
+    webmap.add(layer);  
 
   view.when().then(() => {
 
-    layer.queryFeatureCount().then(function (numFeatures) {
-      //total count to the console
-      document.getElementById("layerResult").textContent = numFeatures;
-      console.log(numFeatures);
-    })
+    // layer.queryFeatureCount().then(function (numFeatures) {
+    //   //total count to the console
+    //   document.getElementById("layerResult").textContent = numFeatures;
+    //   console.log(numFeatures);
+    // })
       // below does not show value?
-    view.whenLayerView(layer).then(function(LayerView) {
-      //do simething with LayerView, by ex, zoom
-      LayerView.watch("updating", function (value){
-        if (!value){
-          LayerView.queryFeatureCount().then(function(numFeaturess){
-            //total count from layerView
-            document.getElementById("layerViewResult").textContent = numFeaturess;
-            console.log(numFeaturess);
-          });
-        }
-      });
-    });
+    // view.whenLayerView(layer).then(function(LayerView) {
+    //   //do simething with LayerView, by ex, zoom
+    //   LayerView.watch("updating", function (value){
+    //     if (!value){
+    //       LayerView.queryFeatureCount().then(function(numFeaturess){
+    //         //total count from layerView
+    //         document.getElementById("layerViewResult").textContent = numFeaturess;
+    //         console.log(numFeaturess);
+    //       });
+    //     }
+    //   });
+    // });
   });
   // query Feature result using parameter from our Input 
-  view.ui.add(document.getElementById("queryFeatures"), "top-left");
-  document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
+  // view.ui.add(document.getElementById("queryFeatures"), "top-left");
+  // document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
 
   function queryFeatureLayer(){
-    let featureName = document.getElementById("searchInput").value;
+    // let featureName = document.getElementById("searchInput").value;
     // alert(featureName);
     // console.log(featureName);
     // //create query for the layer
       let query = layer.createQuery();
     // //define the parameters for he query
-    // query.where = "1=1";
+    query.where = "1=1";
+    query.outfields = ["*"];
+    query.returnGeometry = true;
 
-    // // works when enter site name 'Four Cast' - responds with city name
-    // query.where = `site = '${featureName}'`;
-    // query.outFields =["*"];
-    // query.returnGeometry = true;
-    // //execute the query
-    // layer.queryFeatures(query).then((result) => {
-    //   console.log(result);
-    //   result.features.map((feature) => {
-    //     let cityName = feature.attributes["city"];
-    //     document.getElementById("queryResultInfo").textContent = `${featureName} is in ${cityName} city`
-    //   })
+   
+
+
 
     // works when enter sity name 'Guelf' - responds with site center name
-    query.where = `city = '${featureName}'`;
-    query.outFields =["*"];
-    query.returnGeometry = true;
+    // query.where = `city = '${featureName}'`;  // This is main place to tune query parameter with 'featureName' from input
+    // query.outFields =["*"];
+    // query.returnGeometry = true;
     //execute the query
     layer.queryFeatures(query).then((result) => {
       console.log(result);
-      result.features.map((feature) => {
-        let siteName = feature.attributes["site"];
-        document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`;
+        result.features.map((feature) => {
+          let firstDate = feature.attributes["FIRSTDATE"];
+          let lastDate  = feature.attributes["LASTDATE"];
+          // console.log(firstDate);
+          // console.log(lastDate);
+          // document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`;
 
-        let latPoint = feature.attributes["lat"];
-        let longPoint = feature.attributes["long"];
-        let newPoint = new Point({
-          longitude: `${longPoint}`,
-          latitude: `${latPoint}`,
+          // let latPoint = feature.attributes["lat"];
+          // let longPoint = feature.attributes["long"];
+          // let newPoint = new Point({
+          //   longitude: `${longPoint}`,
+          //   latitude: `${latPoint}`,
+          // });
+          // //create a point graphic
+          // const pointGraphic = new Graphic({
+          //   geometry: newPoint,
+          // }) 
+          // let newGraphicLayer = new GraphicsLayer({});
+          // view.graphics.add(pointGraphic);
+          // view.map.add(newGraphicLayer);
+
+
         });
-         //create a point graphic
-         const pointGraphic = new Graphic({
-          geometry: newPoint,
-         }) 
-         let newGraphicLayer = new GraphicsLayer({});
-         view.graphics.add(pointGraphic);
-         view.map.add(newGraphicLayer);
-
-
-      });
     });
   }
-
-
-
+  queryFeatureLayer();
 
 
 
