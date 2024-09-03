@@ -8,9 +8,10 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
   "esri/views/layers/LayerView",
   "esri/rest/support/Query",
   "esri/symbols/SimpleFillSymbol",
-  "esri/symbols/SimpleLineSymbol"], 
+  "esri/symbols/SimpleLineSymbol",
+  "esri/widgets/TimeSlider"], 
   function(esriConfig, Map, MapView, WebMap, Legend, LayerList, Point, Graphic, 
-    GraphicsLayer, FeatureLayer, LayerView, Query, SimpleFillSymbol, SimpleLineSymbol) {
+    GraphicsLayer, FeatureLayer, LayerView, Query, SimpleFillSymbol, SimpleLineSymbol, TimeSlider) {
 
     // esriConfig.apiKeyAA = "..PTxy8BH1VEsoebNVZXo8HurA00kGrEUM88Me3K5X12dKEX4TMcmo0W5Wax2c5rnRwj-D4jZce2c7SyOloOm4jt6233p_p2PIiu95_P_u0z4qgefMAUj5pxwcOumkpAUl1GWo797V1TSq6liHwqLGbBz7NJhkfayFFu_lWOAgnerk9kzxdhqv8g9xUpRCAl8Gu1ZHRzkO6ZNKnoZORzJDIwN-Pg3_Cwh7ZIYEpsKzAoQSyz0ll4WcJBscktusFy0dPPAT1_IjObyirT";
     // const map = new Map({
@@ -25,6 +26,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     // id: 84ae8a91f40c44de94a370f28c30ab6d wildfire
     //   // url: 'https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Active_Wildfire_Perimeters_in_Canada_View/FeatureServer'
     //   url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0"
+    // id: 5cf54b36bedd460c8c8ecf5a9cfff737  myown feature service for wildfire
+    // id: e2fecab55dc047f2a57714cfa9221477 WFS hosted from layer wildfire view
     // basemap 'hybrid' can be used  without apiKey
 
     // const map = new Map({
@@ -102,6 +105,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
         // url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
         // url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
         url: 'https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Active_Wildfire_Perimeters_in_Canada_View/FeatureServer'
+        // myown wildfire featureLayer: url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Wildfire_perimeters/FeatureServer'
 
       });
 
@@ -180,6 +184,23 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     });
   }
   queryFeatureLayer();
+  // Add a TimeSlider widget to the top left corner of the view.
+const timeSlider = new TimeSlider({
+  container: "customPopup",
+  viewModel: {
+    view: view,
+    mode: "instant",
+    fullTimeExtent: {
+      start: new Date(2000, 0, 1),
+      end: new Date(2024, 0, 1)
+    },
+    timeExtent: {
+      start: new Date(2000, 0, 1),
+      end: new Date(2000, 0, 1)
+    }
+  }
+});
+view.ui.add(timeSlider, "top-left");
 
 
 
