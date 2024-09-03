@@ -9,9 +9,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
   "esri/rest/support/Query",
   "esri/symbols/SimpleFillSymbol",
   "esri/symbols/SimpleLineSymbol",
-  "esri/widgets/TimeSlider"], 
+  "esri/widgets/TimeSlider",
+  "esri/widgets/TimeSlider/TimeSliderViewModel",
+  "esri/support/timeUtils"], 
   function(esriConfig, Map, MapView, WebMap, Legend, LayerList, Point, Graphic, 
-    GraphicsLayer, FeatureLayer, LayerView, Query, SimpleFillSymbol, SimpleLineSymbol, TimeSlider) {
+    GraphicsLayer, FeatureLayer, LayerView, Query, SimpleFillSymbol, SimpleLineSymbol, TimeSlider, TimeSliderVM, timeUtils) {
 
     // esriConfig.apiKeyAA = "..PTxy8BH1VEsoebNVZXo8HurA00kGrEUM88Me3K5X12dKEX4TMcmo0W5Wax2c5rnRwj-D4jZce2c7SyOloOm4jt6233p_p2PIiu95_P_u0z4qgefMAUj5pxwcOumkpAUl1GWo797V1TSq6liHwqLGbBz7NJhkfayFFu_lWOAgnerk9kzxdhqv8g9xUpRCAl8Gu1ZHRzkO6ZNKnoZORzJDIwN-Pg3_Cwh7ZIYEpsKzAoQSyz0ll4WcJBscktusFy0dPPAT1_IjObyirT";
     // const map = new Map({
@@ -28,6 +30,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     //   url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0"
     // id: 5cf54b36bedd460c8c8ecf5a9cfff737  myown feature service for wildfire
     // id: e2fecab55dc047f2a57714cfa9221477 WFS hosted from layer wildfire view
+    // id: 4cc4ab73035a4805a03bdc3cdc056932   usa weather with time enabled widget
     // basemap 'hybrid' can be used  without apiKey
 
     // const map = new Map({
@@ -37,13 +40,13 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     //Instead of webmap we use WebMap class
     const webmap = new WebMap({
       portalItem: { // autocasts as new PortalItem()
-        id: "84ae8a91f40c44de94a370f28c30ab6d"
+        id: "7bb220bfb4f447798b265ee506c2c10c"
       }
     });
 
     const view = new MapView({
       map: webmap,
-      center: [-93.43, 43.72], // Longitude, latitude
+      center: [-97.43, 38.72], // Longitude, latitude
       zoom: 5, // Zoom level
       container: "viewDiv" // Div element
     });
@@ -101,15 +104,15 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
       // })
       // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
 
-      const layer = new FeatureLayer({
-        // url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
-        // url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
-        url: 'https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Active_Wildfire_Perimeters_in_Canada_View/FeatureServer'
-        // myown wildfire featureLayer: url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Wildfire_perimeters/FeatureServer'
+    //   const layer = new FeatureLayer({
+    //     // url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
+    //     // url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
+    //     url: 'https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Active_Wildfire_Perimeters_in_Canada_View/FeatureServer'
+    //     // myown wildfire featureLayer: url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Wildfire_perimeters/FeatureServer'
 
-      });
+    //   });
 
-    webmap.add(layer);  
+    // webmap.add(layer);  
 
   view.when().then(() => {
 
@@ -136,54 +139,56 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
   // view.ui.add(document.getElementById("queryFeatures"), "top-left");
   // document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
 
-  function queryFeatureLayer(){
-    // let featureName = document.getElementById("searchInput").value;
-    // alert(featureName);
-    // console.log(featureName);
-    // //create query for the layer
-      let query = layer.createQuery();
-    // //define the parameters for he query
-    query.where = "1=1";
-    query.outfields = ["*"];
-    query.returnGeometry = true;
+  // function queryFeatureLayer(){
+  //   // let featureName = document.getElementById("searchInput").value;
+  //   // alert(featureName);
+  //   // console.log(featureName);
+  //   // //create query for the layer
+  //     let query = layer.createQuery();
+  //   // //define the parameters for he query
+  //   query.where = "1=1";
+  //   query.outfields = ["*"];
+  //   query.returnGeometry = true;
 
    
 
 
 
-    // works when enter sity name 'Guelf' - responds with site center name
-    // query.where = `city = '${featureName}'`;  // This is main place to tune query parameter with 'featureName' from input
-    // query.outFields =["*"];
-    // query.returnGeometry = true;
-    //execute the query
-    layer.queryFeatures(query).then((result) => {
-      console.log(result);
-        result.features.map((feature) => {
-          let firstDate = feature.attributes["FIRSTDATE"];
-          let lastDate  = feature.attributes["LASTDATE"];
-          // console.log(firstDate);
-          // console.log(lastDate);
-          // document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`;
+  //   // works when enter sity name 'Guelf' - responds with site center name
+  //   // query.where = `city = '${featureName}'`;  // This is main place to tune query parameter with 'featureName' from input
+  //   // query.outFields =["*"];
+  //   // query.returnGeometry = true;
+  //   //execute the query
+  //   layer.queryFeatures(query).then((result) => {
+  //     console.log(result);
+  //       result.features.map((feature) => {
+  //         let firstDate = feature.attributes["FIRSTDATE"];
+  //         let lastDate  = feature.attributes["LASTDATE"];
+  //         // console.log(firstDate);
+  //         // console.log(lastDate);
+  //         // document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`;
 
-          // let latPoint = feature.attributes["lat"];
-          // let longPoint = feature.attributes["long"];
-          // let newPoint = new Point({
-          //   longitude: `${longPoint}`,
-          //   latitude: `${latPoint}`,
-          // });
-          // //create a point graphic
-          // const pointGraphic = new Graphic({
-          //   geometry: newPoint,
-          // }) 
-          // let newGraphicLayer = new GraphicsLayer({});
-          // view.graphics.add(pointGraphic);
-          // view.map.add(newGraphicLayer);
+  //         // let latPoint = feature.attributes["lat"];
+  //         // let longPoint = feature.attributes["long"];
+  //         // let newPoint = new Point({
+  //         //   longitude: `${longPoint}`,
+  //         //   latitude: `${latPoint}`,
+  //         // });
+  //         // //create a point graphic
+  //         // const pointGraphic = new Graphic({
+  //         //   geometry: newPoint,
+  //         // }) 
+  //         // let newGraphicLayer = new GraphicsLayer({});
+  //         // view.graphics.add(pointGraphic);
+  //         // view.map.add(newGraphicLayer);
 
 
-        });
-    });
-  }
-  queryFeatureLayer();
+  //       });
+  //   });
+  // }
+  // queryFeatureLayer();
+
+
   // Add a TimeSlider widget to the top left corner of the view.
 const timeSlider = new TimeSlider({
   container: "customPopup",
@@ -191,17 +196,43 @@ const timeSlider = new TimeSlider({
     view: view,
     mode: "instant",
     fullTimeExtent: {
-      start: new Date(2000, 0, 1),
-      end: new Date(2024, 0, 1)
+      start: new Date(2024, 8, 3),
+      end: new Date(2024, 8, 6)
     },
     timeExtent: {
-      start: new Date(2000, 0, 1),
-      end: new Date(2000, 0, 1)
+      start: new Date(2024, 8, 3),
+      end: new Date(2024, 8, 4)
     }
   }
 });
-view.ui.add(timeSlider, "top-left");
+// view.ui.add(timeSlider, "top-left");
+view.ui.add(timeSlider, "manual");
 
 
+// set the timeslider widget to honor the timeslider settings from the webmap.
+// const timeSlider = new TimeSlider({
+//   ...timeSliderSettings,
+//   view,
+//   playRate: 1000
+// });
+// console.log(`The playback rate is ${timeSlider.playRate} ms.`); // output: "The playback rate is 1000 ms."
+
+// view.ui.add(timeSlider, "manual");
+
+// TimeSlider.getPropertiesFromWebMap(webmap).then((timeSliderSettings) => {
+//   const timeSlider = new TimeSlider({
+//     ...timeSliderSettings,
+//     view
+//   });
+// });
+// const { unit, value } = timeSlider.stops.interval;
+// console.log(`The stop interval is every ${value} ${unit}.`); // output: "This stop interval is every 3 weeks."
+
+timeUtils.getTimeSliderSettingsFromWebDocument(webmap).then((timeSliderSettings) => {
+  const timeSlider = new TimeSlider({
+    ...timeSliderSettings,
+    view
+  });
+});
 
 });
