@@ -7,10 +7,11 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
   "esri/layers/FeatureLayer",
   "esri/views/layers/LayerView",
   "esri/rest/support/Query",
+  "esri/widgets/Search",
   "esri/symbols/SimpleFillSymbol",
   "esri/symbols/SimpleLineSymbol"], 
   function(esriConfig, Map, MapView, WebMap, Legend, LayerList, Point, Graphic, 
-    GraphicsLayer, FeatureLayer, LayerView, Query, SimpleFillSymbol, SimpleLineSymbol) {
+    GraphicsLayer, FeatureLayer, LayerView, Query, Search, SimpleFillSymbol, SimpleLineSymbol) {
 
     // esriConfig.apiKeyAA = "..PTxy8BH1VEsoebNVZXo8HurA00kGrEUM88Me3K5X12dKEX4TMcmo0W5Wax2c5rnRwj-D4jZce2c7SyOloOm4jt6233p_p2PIiu95_P_u0z4qgefMAUj5pxwcOumkpAUl1GWo797V1TSq6liHwqLGbBz7NJhkfayFFu_lWOAgnerk9kzxdhqv8g9xUpRCAl8Gu1ZHRzkO6ZNKnoZORzJDIwN-Pg3_Cwh7ZIYEpsKzAoQSyz0ll4WcJBscktusFy0dPPAT1_IjObyirT";
     // const map = new Map({
@@ -122,7 +123,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     });
   });
   // query Feature result using parameter from our Input 
-  view.ui.add(document.getElementById("queryFeatures"), "top-left");
+  view.ui.add(document.getElementById("queryFeatures"), "bottom-left");
   document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
 
   function queryFeatureLayer(){
@@ -146,7 +147,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     //     document.getElementById("queryResultInfo").textContent = `${featureName} is in ${cityName} city`
     //   })
 
-    // works when enter sity name 'Guelf' - responds with site center name
+    // works when enter sity name 'Guelph' - responds with site center name
     query.where = `city = '${featureName}'`;
     query.outFields =["*"];
     query.returnGeometry = true;
@@ -170,14 +171,26 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
          let newGraphicLayer = new GraphicsLayer({});
          view.graphics.add(pointGraphic);
          view.map.add(newGraphicLayer);
-
-
       });
     });
   }
 
+  const searchWidget = new Search({
+    view: view,
+    sources: [
+      {
+        layer: layer,
+        searchFields: ["city", "site"],
+        exactMatch: false,
+        placeholder: "example: Guelph",
+      },
+    ],
+  });
 
-
+  view.ui.add(searchWidget, {
+    position: "top-left",
+    index: 2,
+  });
 
 
 
