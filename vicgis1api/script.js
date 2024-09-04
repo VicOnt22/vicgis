@@ -220,20 +220,7 @@ webmap.add(layer);
       function queryFeatureLayer(){
 
         let featureName = document.getElementById("searchInput").value;
-        // alert(featureName);
-        // console.log(featureName);
-        //create query for the layer
-        // let query = layer.createQuery();
-        // //define the parameters for he query
-        // query.where = "1=1";
-
-        // works when enter site name 'Four Cast' - responds with city name
-        // query.where = `site = '${featureName}'`;
-
-
-
-
-
+        
         let query = layer.createQuery();
         //define the parameters for the query
         query.where = "1=1";
@@ -244,16 +231,34 @@ webmap.add(layer);
         query.returnGeometry = true;
         //execute the query
         let arr = [];
+        let finalArr =[];
         layer.queryFeatures(query).then((result) => {
           // console.log(result.fields);
           // console.log(featureName);
           
-          result.features.map((feature) => {
+          result.features.flatMap((feature) => {
             let columnSelected = feature.attributes[featureName];
           
-                arr.push(columnSelected)
-              
-           
+                arr.push(columnSelected);
+                if (columnSelected !== -9999){
+                  finalArr.push(columnSelected);
+                }
+                
+                if (arr.length == 2000){
+                  
+                 let minValueb = Math.min(...finalArr);
+                 let maxValueb = Math.max(...finalArr);
+                 console.log("min = ", minValueb, "; max = ",maxValueb);
+                 console.log("number of missing data = ", (arr.length - finalArr.length));
+                 function getAverage(finalArr){
+                  let sum = 0;
+                  for (let i=0; i< finalArr.length; i++) {sum += finalArr[i];}
+                  return sum / finalArr.length;
+                 };
+                 console.log ("Average = ", getAverage(finalArr));
+
+
+                };
             // document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`
           });
           
@@ -266,7 +271,7 @@ webmap.add(layer);
 
         });
         
-
+        
         // console.log("arr= ", arr[2].Value);
        
           // function findMinMax(){
@@ -275,7 +280,17 @@ webmap.add(layer);
             // console.log(minValue, maxValue);
           // }
           // findMinMax()
-          console.log(arr);
+          // console.log("array= ", arr['2']);
+
+          // const holder=[];
+          // arr.forEach(obj=>{
+          //   holder.push(obj.value)
+          // });
+          // console.log("goodarray= ", arr);
+
+
+
+
 
       }
 
