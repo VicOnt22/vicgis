@@ -8,13 +8,13 @@ html,body,#viewDiv {
 #customPopup {
   position: absolute;
   z-index: 1;
-  top: 130px;
+  top: 30px;
   right: 10px;
-  height: 120px;
-  width: 300px;
+  height: 220px;
+  width: 400px;
   background-color: aqua;
   border-radius: 5px;
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 nav {
@@ -38,13 +38,21 @@ nav a:hover {
 #viewDiv {
   padding: 0;
   margin: 0;
-  height: 100px;
+  height: 400px;
   width: auto;
 }
 
 #tableDiv {
   padding: 0;
   margin: 0;
-  height: 600px;
+  height: 300px;
   width: auto;
+}
+
+#queryFeatures {
+  width: 400px;
+}
+
+input #searchInput {
+width: 350px;
 }
