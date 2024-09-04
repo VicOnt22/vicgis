@@ -37,7 +37,8 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     const webmap = new WebMap({
       portalItem: { // autocasts as new PortalItem()
         // id: "1793be3bf1b54796ac9c48cb7f754020"
-        id: "29acc12bf6054b21a703f0ef07757dd8"
+        // id: "29acc12bf6054b21a703f0ef07757dd8"
+        id: "ff6129463b7f4473a01c01026e5fd523"
       }
     });
 
@@ -110,88 +111,120 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
         url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/From_files_hosted_feature_layer_view/FeatureServer'
       });
 
-  view.when().then(() => {
+      webmap.add(layer);  
 
-    // layer.queryFeatureCount().then(function (numFeatures) {
-    //   //total count to the console
-    //   document.getElementById("layerResult").textContent = numFeatures;
-    //   console.log(numFeatures);
-    // })
-      // below does not show value?
-    // view.whenLayerView(layer).then(function(LayerView) {
-    //   //do simething with LayerView, by ex, zoom
-    //   LayerView.watch("updating", function (value){
-    //     if (!value){
-    //       LayerView.queryFeatureCount().then(function(numFeaturess){
-    //         //total count from layerView
-    //         document.getElementById("layerViewResult").textContent = numFeaturess;
-    //         console.log(numFeaturess);
-    //       });
-    //     }
-    //   });
-    // });
+      view.when().then(() => {
+    
+        // layer.queryFeatureCount().then(function (numFeatures) {
+        //   //total count to the console
+        //   document.getElementById("layerResult").textContent = numFeatures;
+        //   console.log(numFeatures);
+        // })
+          // below does not show value?
+        // view.whenLayerView(layer).then(function(LayerView) {
+        //   //do simething with LayerView, by ex, zoom
+        //   LayerView.watch("updating", function (value){
+        //     if (!value){
+        //       LayerView.queryFeatureCount().then(function(numFeaturess){
+        //         //total count from layerView
+        //         document.getElementById("layerViewResult").textContent = numFeaturess;
+        //         console.log(numFeaturess);
+        //       });
+        //     }
+        //   });
+        // });
+      });
+      // query Feature result using parameter from our Input 
+      view.ui.add(document.getElementById("customPopup"), "top-right");
+      // document.addEventListener("click", queryFeatureLayer);
+    
+      // function queryFeatureLayer(){
+        // view.popup=null;
+
+      //   // let featureName = document.getElementById("searchInput").value;
+      //   // alert(featureName);
+      //   // console.log(featureName);
+      //   // //create query for the layer
+      //     let query = layer.createQuery();
+      //   // //define the parameters for he query
+      //   query.where = `FID = '12087'`
+      //   // query.where = "1=1";
+      //   query.outfields = ["*"];
+      //   query.returnGeometry = true;
+    
+       
+    
+    
+    
+      //   // works when enter sity name 'Guelf' - responds with site center name
+      //   // query.where = `city = '${featureName}'`;  // This is main place to tune query parameter with 'featureName' from input
+      //   // query.outFields =["*"];
+      //   // query.returnGeometry = true;
+      //   //execute the query
+      //   layer.queryFeatures(query).then((result) => {
+      //     console.log(result);
+      //       result.features.map((feature) => {
+      //         let percentPoligon = feature.attributes["tcc_v"];
+              
+      //         console.log(percentPoligon);
+              
+      //         // document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`;
+      //         document.getElementById("queryResultInfo").textContent = `${percentPoligon}`;
+    
+      //       //   // let latPoint = feature.attributes["lat"];
+      //       //   // let longPoint = feature.attributes["long"];
+      //       //   // let newPoint = new Point({
+      //       //   //   longitude: `${longPoint}`,
+      //       //   //   latitude: `${latPoint}`,
+      //       //   // });
+      //       //   // //create a point graphic
+      //       //   // const pointGraphic = new Graphic({
+      //       //   //   geometry: newPoint,
+      //       //   // }) 
+      //       //   // let newGraphicLayer = new GraphicsLayer({});
+      //       //   // view.graphics.add(pointGraphic);
+      //       //   // view.map.add(newGraphicLayer);
+    
+    
+      //       });
+      //   });
+      // }
+      // queryFeatureLayer(); // that works when we do not have 'click' event part
+
+ view.on("click", ({ x, y} ) => {
+  const screenPoint = {x, y};
+  view.hitTest(screenPoint)
+  .then(response => {
+    // do something with the result graphic FID=12087
+    const graphic = response.results[0].graphic;
+    // console.log(graphic.attributes['FID']);
+
+    let query = layer.createQuery();
+    // //define the parameters for he query
+    query.where = `FID = '${graphic.attributes["FID"]}'`
+    // query.where = "1=1";
+    query.outfields = ["*"];
+    query.returnGeometry = true;
+  //execute the query
+    layer.queryFeatures(query).then((result) => {
+      // console.log(result);
+        result.features.map((feature) => {
+          let percentPoligon = (Math.round(feature.attributes["tcc_v"] * 100)/100 ).toFixed(2);
+          document.getElementById("queryResultInfo").textContent = `  ${percentPoligon}%`;
+    
+          // console.log(percentPoligon);
+        });
+    });
+
+
+
+
   });
-  // query Feature result using parameter from our Input 
-  view.ui.add(document.getElementById("customPopup"), "top-right");
-  // document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
+
   
-  // view.on("click", queryFeatureLayer);
-
-  // function queryFeatureLayer(){
-  //   // let featureName = document.getElementById("searchInput").value;
-  //   // alert(featureName);
-  //   // console.log(featureName);
-  //   // //create query for the layer
-  //     let query = layer.createQuery();
-  //   // //define the parameters for he query
-  //   // query.where = "1=1";
-
-  //   // // works when enter site name 'Four Cast' - responds with city name
-  //   // query.where = `site = '${featureName}'`;
-  //   // query.outFields =["*"];
-  //   // query.returnGeometry = true;
-  //   // //execute the query
-  //   // layer.queryFeatures(query).then((result) => {
-  //   //   console.log(result);
-  //   //   result.features.map((feature) => {
-  //   //     let cityName = feature.attributes["city"];
-  //   //     document.getElementById("queryResultInfo").textContent = `${featureName} is in ${cityName} city`
-  //   //   })
-
-  //   // works when enter sity name 'Guelf' - responds with site center name
-  //   // query.where = `city = '${featureName}'`;
-  //   query.where = "1=1";
-  //   query.outFields =["*"];
-  //   query.returnGeometry = true;
-  //   //execute the query
-  //   layer.queryFeatures(query).then((result) => {
-  //     console.log(result);
-  //     result.features.map((feature) => {
-  //       let sitePercent = feature.attributes["tcc_v"];
-  //       document.getElementById("queryResultInfo").textContent = `poligon canopy percentage ${sitePercent}`;
-
-  //       // let latPoint = feature.attributes["lat"];
-  //       // let longPoint = feature.attributes["long"];
-  //       // let newPoint = new Point({
-  //       //   longitude: `${longPoint}`,
-  //       //   latitude: `${latPoint}`,
-  //       // });
-  //       //  //create a point graphic
-  //       //  const pointGraphic = new Graphic({
-  //       //   geometry: newPoint,
-  //       //  }) 
-  //       //  let newGraphicLayer = new GraphicsLayer({});
-  //       //  view.graphics.add(pointGraphic);
-  //       //  view.map.add(newGraphicLayer);
-
-
-  //     });
-  //   });
-  // }
-
-
-
-
+ });
+  
+ 
 
 
 });
