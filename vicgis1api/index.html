@@ -13,12 +13,12 @@
     </head>
     <body>
       <header><h3>Vic ArcGIS WebMap </h3></header>
-      <nav>
+      <!-- <nav>
         <a href="#">Home</a>
         <a href="#">Map</a>
         <a href="#">Layers</a>
         <a href="#">About</a>
-      </nav>
+      </nav> -->
       <div id="viewDiv"></div>
       <div id="tableDiv"></div>
 
@@ -32,24 +32,24 @@
 
     <!-- create dropdown with lyrList custom widget names, doing nothing, just dropdown -->
 
-    <div class="esri-widget" id="lyrList">
+    <!-- <div class="esri-widget" id="lyrList">
       <label>Layer List</label>
       <select id="layerName">
         <option>Select the Layer</option>
       </select> 
-    </div>
+    </div>  -->
 
-        <div class="esri-widget" id="customPopup">
+     <!--   <div class="esri-widget" id="customPopup">
         <h2>Feature count</h2>
         Layer: <span id="layerResult"></span>;<br>
         LayerView: <span id="layerViewResult"></span>;
-      </div>
-
-      <!-- <div class="esri-widget" id="queryFeatures">
-        <input type="text" placeholder="Enter query parameter" id="searchInput" /><br>
-        <button id="queryBtn">QueryRecords</button>
-        <p id="queryResultInfo"></p>
       </div> -->
+
+      <div class="esri-widget" id="queryFeatures">
+        <input type="text" placeholder="Enter column name" id="searchInput" /><br>
+        <button id="queryBtn">QueryColumn</button>
+        <p id="queryResultInfo"></p>
+      </div>
 
 
     </body>

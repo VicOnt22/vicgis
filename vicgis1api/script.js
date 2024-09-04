@@ -30,7 +30,7 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
     //Instead of webmap we use WebMap class
     const webmap = new WebMap({
       portalItem: { // autocasts as new PortalItem()
-        id: "cf35269c59cd45cc9bfae3480c0a64d7"
+        id: "69789526816646c2b51da5f8d1310fa0"
       }
     });
 
@@ -94,111 +94,195 @@ require(["esri/config", "esri/Map", "esri/views/MapView", "esri/WebMap",
       // })
       // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
 
+
+
       const layer = new FeatureLayer({
         // url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/Scs_Map_layer_from_csv/FeatureServer'
-        url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
+        // url: 'https://services2.arcgis.com/rDdKyyk7uludsLpI/arcgis/rest/services/Hazards_Public/FeatureServer'
+       url: 'https://services6.arcgis.com/9fJwrQb0Ck2g6rbJ/arcgis/rest/services/greenness_table_web/FeatureServer'
       });
 
-view.when().then(() => {
+webmap.add(layer);
+// view.add(layer);
 
-  layer.queryFeatureCount().then(function (numFeatures) {
-    //total count to the console
-    document.getElementById("layerResult").textContent = numFeatures;
-    console.log(numFeatures);
-  })
-    // below does not show value?
-  view.whenLayerView(layer).then(function(LayerView) {
-    //do simething with LayerView, by ex, zoom
-    LayerView.watch("updating", function (value){
-      if (!value){
-        LayerView.queryFeatureCount().then(function(numFeaturess){
-          //total count from layerView
-          document.getElementById("layerViewResult").textContent = numFeaturess;
-          console.log(numFeaturess);
-        });
-      }
-    });
-  });
-});
-// // qyery Feature result using parameter from our Input 
-// view.ui.add(document.getElementById("queryFeatures"), "top-left");
-// document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
+ view.when().then(() => {
 
-// function queryFeatureLayer(){
-  // let featureName = document.getElementById("searchInput").value;
-  // alert(featureName);
-  // console.log(featureName);
-  // //create query for the layer
-  // let query = layer.createQuery();
-  // //define the parameters for he query
-  // query.where = "1=1";
+// //   layer.queryFeatureCount().then(function (numFeatures) {
+// //     //total count to the console
+// //     document.getElementById("layerResult").textContent = numFeatures;
+// //     console.log(numFeatures);
+// //   })
+// //     // below does not show value?
+// //   view.whenLayerView(layer).then(function(LayerView) {
+// //     //do simething with LayerView, by ex, zoom
+// //     LayerView.watch("updating", function (value){
+// //       if (!value){
+// //         LayerView.queryFeatureCount().then(function(numFeaturess){
+// //           //total count from layerView
+// //           document.getElementById("layerViewResult").textContent = numFeaturess;
+// //           console.log(numFeaturess);
+// //         });
+// //       }
+// //     });
+// //   });
+// // });
+// // // qyery Feature result using parameter from our Input 
+// // view.ui.add(document.getElementById("queryFeatures"), "top-left");
+// // document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
 
-  // // works when enter site name 'Four Cast' - responds with city name
-  // query.where = `site = '${featureName}'`;
-  // query.outFields =["*"];
-  // query.returnGeometry = true;
-  // //execute the query
-  // layer.queryFeatures(query).then((result) => {
-  //   console.log(result);
-  //   result.features.map((feature) => {
-  //     let cityName = feature.attributes["city"];
-  //     document.getElementById("queryResultInfo").textContent = `${featureName} is in ${cityName} city`
-  //   })
+// // function queryFeatureLayer(){
+//   // let featureName = document.getElementById("searchInput").value;
+//   // alert(featureName);
+//   // console.log(featureName);
+//   // //create query for the layer
+//   // let query = layer.createQuery();
+//   // //define the parameters for he query
+//   // query.where = "1=1";
 
-  // // works when enter sity name 'Guelf' - responds with site center name
-  // query.where = `city = '${featureName}'`;
-  // query.outFields =["*"];
-  // query.returnGeometry = true;
-  // //execute the query
-  // layer.queryFeatures(query).then((result) => {
-  //   console.log(result);
-  //   result.features.map((feature) => {
-  //     let siteName = feature.attributes["site"];
-  //     document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`
-  //   });
-  // });
+//   // // works when enter site name 'Four Cast' - responds with city name
+//   // query.where = `site = '${featureName}'`;
+//   // query.outFields =["*"];
+//   // query.returnGeometry = true;
+//   // //execute the query
+//   // layer.queryFeatures(query).then((result) => {
+//   //   console.log(result);
+//   //   result.features.map((feature) => {
+//   //     let cityName = feature.attributes["city"];
+//   //     document.getElementById("queryResultInfo").textContent = `${featureName} is in ${cityName} city`
+//   //   })
+
+//   // // works when enter sity name 'Guelf' - responds with site center name
+//   // query.where = `city = '${featureName}'`;
+//   // query.outFields =["*"];
+//   // query.returnGeometry = true;
+//   // //execute the query
+//   // layer.queryFeatures(query).then((result) => {
+//   //   console.log(result);
+//   //   result.features.map((feature) => {
+//   //     let siteName = feature.attributes["site"];
+//   //     document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`
+//   //   });
+//   // });
     
-// now we add working dropdown with actions after select from the list of layer names
+// // now we add working dropdown with actions after select from the list of layer names
 
-//     // add LayerList widget
-      // let layerList = new LayerList({
-      //   view: view
-      // })
-      // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
+// //     // add LayerList widget
+//       // let layerList = new LayerList({
+//       //   view: view
+//       // })
+//       // view.ui.add(layerList, "top-left"); //already shows up ok, no change to html
    
-  //     // now we extract layer name from webmap layers property to use in html dropdown
-  let lyrList = document.getElementById("lyrList");
-  view.ui.add(lyrList, "top-left");
+//   //     // now we extract layer name from webmap layers property to use in html dropdown
+//   let lyrList = document.getElementById("lyrList");
+//   view.ui.add(lyrList, "top-left");
 
-      view.when().then(() => {
-        webmap.layers.map((Layer)=>{
-          // console.log(Layer.title);
-          let option = document.createElement("option");
-          option.textContent = Layer.title;
-          let select = document.getElementById("layerName")
-          select.appendChild(option);
+//       view.when().then(() => {
+//         webmap.layers.map((Layer)=>{
+//           // console.log(Layer.title);
+//           let option = document.createElement("option");
+//           option.textContent = Layer.title;
+//           let select = document.getElementById("layerName")
+//           select.appendChild(option);
+//         });
+//       });
+
+      // document.getElementById("layerName").addEventListener("change", getLayerName);
+      // function getLayerName (event){
+      //   console.log(event.target.value);
+      //   let lyrName = event.target.value;
+      //   document.getElementById("tableDiv").innerHTML = null;  //clear previous selection
+      //   // find a layer by its title
+      //   const foundLayer = webmap.allLayers.find(function (layer){
+      //     return layer.title === lyrName;
+      //   });
+
+//         let featureTable = new FeatureTable({
+//         view: view,
+//         layer: foundLayer,   //layer from line 97 "hazards public Salesforce table"
+//         container: "tableDiv"
+//         });
+
+
+// }
+  
+        let featureTable = new FeatureTable({
+        view: view,
+        layer: layer,   //layer from line 97 "hazards public Salesforce table"
+        container: "tableDiv"
         });
+
       });
 
-      document.getElementById("layerName").addEventListener("change", getLayerName);
-      function getLayerName (event){
-        console.log(event.target.value);
-        let lyrName = event.target.value;
-        document.getElementById("tableDiv").innerHTML = null;  //clear previous selection
-        // find a layer by its title
-        const foundLayer = webmap.allLayers.find(function (layer){
-          return layer.title === lyrName;
+
+      view.ui.add(document.getElementById("queryFeatures"), "top-right");
+      document.getElementById("queryBtn").addEventListener("click", queryFeatureLayer);
+
+      function queryFeatureLayer(){
+
+        let featureName = document.getElementById("searchInput").value;
+        // alert(featureName);
+        // console.log(featureName);
+        //create query for the layer
+        // let query = layer.createQuery();
+        // //define the parameters for he query
+        // query.where = "1=1";
+
+        // works when enter site name 'Four Cast' - responds with city name
+        // query.where = `site = '${featureName}'`;
+
+
+
+
+
+        let query = layer.createQuery();
+        //define the parameters for the query
+        query.where = "1=1";
+        query.outFields =["*"];
+        // query.outFields = [`'${featureName}'`]
+        // query.outFields =[featureName];
+
+        query.returnGeometry = true;
+        //execute the query
+        let arr = [];
+        layer.queryFeatures(query).then((result) => {
+          // console.log(result.fields);
+          // console.log(featureName);
+          
+          result.features.map((feature) => {
+            let columnSelected = feature.attributes[featureName];
+          
+                arr.push(columnSelected)
+              
+           
+            // document.getElementById("queryResultInfo").textContent = `${featureName} has site named ${siteName}`
+          });
+          
+          // function findMinMax(){
+          //   let minValue = Math.min(...arr);
+          //   let maxValue = Math.max(...arr);
+          //   console.log(minValue, maxValue);
+          // }
+          // findMinMax()
+
         });
+        
 
-      let featureTable = new FeatureTable({
-       view: view,
-       layer: foundLayer,   //layer from line 97 "hazards public Salesforce table"
-       container: "tableDiv"
-       });
-
+        // console.log("arr= ", arr[2].Value);
+       
+          // function findMinMax(){
+            // let minValue = Math.min(...arr);
+            // let maxValue = Math.max(...arr);
+            // console.log(minValue, maxValue);
+          // }
+          // findMinMax()
+          console.log(arr);
 
       }
-  
+
+     
+
+
+
 
 
 
